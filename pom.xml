@@ -264,6 +264,14 @@
 
 	<repositories>
 		<repository>
+			<id>oschina</id>
+			<name>oschina Maven Release Repository</name>
+			<url>http://maven.oschina.net/content/groups/public/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>		
+		<repository>
 			<id>org.jboss.repository.releases</id>
 			<name>JBoss Maven Release Repository</name>
 			<url>https://repository.jboss.org/nexus/content/repositories/releases</url>
