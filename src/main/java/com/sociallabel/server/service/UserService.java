@@ -20,22 +20,33 @@ public class UserService {
 
 	@Transactional
 	public void addUser(User u) {
-		if (u.getLoginName() == null || u.getName() == null || u.getPassword() == null) {
+		if (u.getEmail() == null || u.getUsername() == null || u.getUserpwd() == null) {
 			throw new APIException(400, "bad request");
 		}
 		TypedQuery<User> q = em.createQuery(
-				"SELECT u FROM User u where u.loginName = ?", User.class);
-		q.setParameter(1, u.getLoginName());
+				"SELECT u FROM User u where u.email = ?", User.class);
+		q.setParameter(1, u.getEmail());
 		if (q.getResultList().size() > 0) {
 			throw new APIException(400, "duplicated login name");
 		}		
 		//Encrypt password for security
-		u.setPassword(SecurityUtil.encrypt(u.getPassword()));		
+		u.setUserpwd(SecurityUtil.encrypt(u.getUserpwd()));
+		//u.setUsername(SecurityUtil.encrypt(u.getUsername()));
 		em.persist(u);
 	}
 
 	public List<User> findAllUsers() {
 		return em.createQuery("SELECT u FROM User u", User.class)
 				.getResultList();
+	}
+	
+	
+	public void updateUser(User u) {
+		User user = em.find(User.class, u.getEmail());
+		user.setBirthday(u.getBirthday());
+		user.setCity(u.getCity());
+		user.setPicture(u.getPicture());
+		user.setSex(u.getSex());
+		em.persist(user);
 	}
 }
