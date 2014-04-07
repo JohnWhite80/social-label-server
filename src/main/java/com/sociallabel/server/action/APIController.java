@@ -29,9 +29,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sociallabel.server.APIException;
 import com.sociallabel.server.entity.User;
@@ -57,10 +60,11 @@ public class APIController {
 	
 	
 	
-	
+	/*
 	//完善个人信息的操作
 	@RequestMapping(value = "/uploadinformation")
 	@ResponseBody
+	
 	public String upload(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException{
 		StringBuffer sb = new StringBuffer("");
 		String result = "";
@@ -80,7 +84,7 @@ public class APIController {
 		}
 		JSONObject jsonObject = JSONObject.fromObject(result);
 		String pictureString=jsonObject.getString("picture");
-		String email=jsonObject.getString("email");
+		//String email=jsonObject.getString("email");
 		FileWriter fw = new FileWriter("F:\\A.txt");
 		fw.write(pictureString); 
 		
@@ -90,12 +94,13 @@ public class APIController {
 		String city=jsonObject.getString("city");
 		
 		User u=new User();
-		u.setEmail("2217282355@qq.com");
+		u.setEmail("123456789@qq.com");
 		u.setPicture(picture);
 		u.setSex(sex);
 		u.setBirthday(birthday);
 		u.setCity(city);
 		userService.updateUser(u);
+		
 		PrintWriter pw = response.getWriter();
 		//封装服务器返回的JSON对象
 		JSONObject jsonReply = new JSONObject();
@@ -107,16 +112,87 @@ public class APIController {
 		pw.close();	
 		return null;			
 	}
-	
+	*/
 	//注册操作
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 * @throws IOException 
 	 * @throws ServletException 
 	 */
-	@RequestMapping(value = "/register")
+//	@RequestMapping(value = "/register")
+//	@ResponseBody
+//	public String register(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException{		
+//		StringBuffer sb = new StringBuffer("");
+//		String result = "";
+//		try {
+//			BufferedReader br = new BufferedReader(new InputStreamReader(
+//					request.getInputStream(), "utf-8"));
+//			String temp;
+//			while ((temp = br.readLine()) != null) {
+//				sb.append(temp);
+//			}
+//			br.close();
+//			result = sb.toString();
+//			//打印android端上传的JSON数据
+//			System.out.println(result);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		JSONObject jsonObject = JSONObject.fromObject(result);
+//		String email = jsonObject.getString("e_mail");
+//		String password=jsonObject.getString("password");
+//		String username=jsonObject.getString("nikeName");
+//		user.setEmail(email);
+//		user.setUsername(username);
+//		user.setUserpwd(password);
+//		
+//		List<User> list=userService.findAllUsers();
+//		for(;i<list.size();i++){
+//			if(!(email.equals(list.get(i).getEmail()))){
+//				j++;
+//			}else{
+//				break;
+//			}
+//		}
+//		System.out.println(j);
+//		if(String.valueOf(list.size()).equals(String.valueOf(j))){
+//			//userService.addUser(user);
+//			HttpEntity<User> requestEntity = new HttpEntity(user);
+//			ResponseEntity<String> result1 = template.postForEntity("http://localhost:8080/server/api/register1", user, String.class);
+//			userService.addUser(user);
+//			System.out.println("Register Success");
+//			PrintWriter pw = response.getWriter();
+//			//封装服务器返回的JSON对象
+//			JSONObject jsonReply = new JSONObject();
+//			jsonReply.put("register","register success");
+//			jsonReply.put("email",user.getEmail());
+//			//打印返回的JSON数据
+//			System.out.println(jsonReply);
+//			pw.write(jsonReply.toString());
+//			pw.flush();
+//			pw.close();
+//		}else{
+//			System.out.println("Register Error");
+//			PrintWriter pw = response.getWriter();
+//			//封装服务器返回的JSON对象
+//			JSONObject jsonReply = new JSONObject();
+//			jsonReply.put("register","register error");
+//			//打印返回的JSON数据
+//			System.out.println(jsonReply);
+//			pw.write(jsonReply.toString());
+//			pw.flush();
+//			pw.close();
+//			
+//		}
+//		
+//		return "";
+//		
+//	}
+	
+	@RequestMapping(value = "/addtag")
 	@ResponseBody
-	public String register(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException{		
+	public String addTag(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException{
 		StringBuffer sb = new StringBuffer("");
 		String result = "";
 		try {
@@ -135,9 +211,11 @@ public class APIController {
 		}
 		
 		JSONObject jsonObject = JSONObject.fromObject(result);
-		String email = jsonObject.getString("e_mail");
-		String password=jsonObject.getString("password");
-		String username=jsonObject.getString("nikeName");
+		String tag1 = jsonObject.getString("tag1");
+		String tag2=jsonObject.getString("tag2");
+		String tag3=jsonObject.getString("tag3");
+		String tag4=jsonObject.getString("tag4");
+		String tag5=jsonObject.getString("tag5");
 		user.setEmail(email);
 		user.setUsername(username);
 		user.setUserpwd(password);
@@ -181,10 +259,9 @@ public class APIController {
 			
 		}
 		
+
 		return "";
-		
 	}
-	
 	//登录操作
 	@RequestMapping(value = "/logging")
 	@ResponseBody
@@ -252,16 +329,30 @@ public class APIController {
 		
 	}
 	
+	
 	@RequestMapping(value = "/register1")
 	@ResponseBody
-	public ResponseEntity<String> registerUser(@RequestBody User user, Model model) {
-		//userService.addUser(user);
+	public JSONObject registerUser(@RequestBody User user, Model model) {
+		userService.addUser(user);
+		JSONObject jsonReply = new JSONObject();
+		jsonReply.put("register","register success");
+		jsonReply.put("email",user.getEmail());
+		return jsonReply;
+	}
+	
+	/**
+	 * Simply selects the home view to render by returning its name.
+	 * @throws Exception 
+	 */
+	@RequestMapping(value = "/profile", method = RequestMethod.POST,  produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<String> profile(@RequestParam("userId") long userId, @RequestParam("filename") String filename, @RequestPart("image") MultipartFile file) throws Exception {
+		userService.updateProfile(userId, filename, file);
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.set("x-code", "200");
 		responseHeaders.set("x-message", "success");
 		return new ResponseEntity<String>("", responseHeaders, HttpStatus.OK);
 	}
-	
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<String> handleException(Exception e) {
