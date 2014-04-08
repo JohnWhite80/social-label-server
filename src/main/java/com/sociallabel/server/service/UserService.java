@@ -30,7 +30,7 @@ public class UserService {
 			throw new APIException(400, "bad request");
 		}
 		List<User> users = userRepository.findByEmail(u.getEmail());
-		List<UserTag> tag=tagRepository.findbyEmail(u.getEmail());
+		List<UserTag> tag=tagRepository.findByEmail(u.getEmail());
 		if (users.size() > 0) {
 			throw new APIException(400, "duplicated login name");
 		}		
@@ -55,7 +55,7 @@ public class UserService {
 	}
 	@Transactional
 	public UserTag addtag(UserTag t){
-		List<UserTag> tag=tagRepository.findbyEmail(t.getEmail());
+		//List<UserTag> tag=tagRepository.findByEmail(t.getEmail());
 		t.setTag1(t.getTag1());
 		t.setTag2(t.getTag2());
 		t.setTag3(t.getTag3());
