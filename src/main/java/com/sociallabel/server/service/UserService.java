@@ -65,8 +65,13 @@ public class UserService {
 		
 			
 	}
-//	@Transactional
-//	public void updateUser(User u) {
+	@Transactional
+	public void updateUser(User u) {
+		User user=userRepository.findOne(u.getId());
+		user.setSex(u.getSex());
+		user.setBirthday(u.getBirthday());
+		user.setCity(u.getCity());
+		userRepository.saveAndFlush(user);
 //		TypedQuery<User> q = em.createQuery(
 //				"SELECT u FROM User u where u.email = ?", User.class);
 //		q.setParameter(1, u.getEmail());
@@ -81,7 +86,7 @@ public class UserService {
 //		user.setPicture(u.getPicture());
 //		user.setSex(u.getSex());
 //		em.persist(user);
-//	   //em.joinTransaction();
-//		
-//	}
+	   //em.joinTransaction();
+		
+	}
 }

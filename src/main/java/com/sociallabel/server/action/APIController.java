@@ -38,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sociallabel.server.APIException;
 import com.sociallabel.server.entity.User;
+import com.sociallabel.server.entity.UserTag;
 import com.sociallabel.server.service.UserService;
 import com.sociallabel.server.util.SecurityUtil;
 
@@ -52,6 +53,7 @@ public class APIController {
 	int i=0;
     int j=0;
 	User user=new User();
+	UserTag tag=new UserTag();
 	@RequestMapping (value = "/users")
     public @ResponseBody List<User> findAllUsers() {
          return userService.findAllUsers();
@@ -60,7 +62,7 @@ public class APIController {
 	
 	
 	
-	/*
+	
 	//完善个人信息的操作
 	@RequestMapping(value = "/uploadinformation")
 	@ResponseBody
@@ -112,87 +114,16 @@ public class APIController {
 		pw.close();	
 		return null;			
 	}
-	*/
+	
 	//注册操作
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 * @throws IOException 
 	 * @throws ServletException 
 	 */
-//	@RequestMapping(value = "/register")
-//	@ResponseBody
-//	public String register(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException{		
-//		StringBuffer sb = new StringBuffer("");
-//		String result = "";
-//		try {
-//			BufferedReader br = new BufferedReader(new InputStreamReader(
-//					request.getInputStream(), "utf-8"));
-//			String temp;
-//			while ((temp = br.readLine()) != null) {
-//				sb.append(temp);
-//			}
-//			br.close();
-//			result = sb.toString();
-//			//打印android端上传的JSON数据
-//			System.out.println(result);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		
-//		JSONObject jsonObject = JSONObject.fromObject(result);
-//		String email = jsonObject.getString("e_mail");
-//		String password=jsonObject.getString("password");
-//		String username=jsonObject.getString("nikeName");
-//		user.setEmail(email);
-//		user.setUsername(username);
-//		user.setUserpwd(password);
-//		
-//		List<User> list=userService.findAllUsers();
-//		for(;i<list.size();i++){
-//			if(!(email.equals(list.get(i).getEmail()))){
-//				j++;
-//			}else{
-//				break;
-//			}
-//		}
-//		System.out.println(j);
-//		if(String.valueOf(list.size()).equals(String.valueOf(j))){
-//			//userService.addUser(user);
-//			HttpEntity<User> requestEntity = new HttpEntity(user);
-//			ResponseEntity<String> result1 = template.postForEntity("http://localhost:8080/server/api/register1", user, String.class);
-//			userService.addUser(user);
-//			System.out.println("Register Success");
-//			PrintWriter pw = response.getWriter();
-//			//封装服务器返回的JSON对象
-//			JSONObject jsonReply = new JSONObject();
-//			jsonReply.put("register","register success");
-//			jsonReply.put("email",user.getEmail());
-//			//打印返回的JSON数据
-//			System.out.println(jsonReply);
-//			pw.write(jsonReply.toString());
-//			pw.flush();
-//			pw.close();
-//		}else{
-//			System.out.println("Register Error");
-//			PrintWriter pw = response.getWriter();
-//			//封装服务器返回的JSON对象
-//			JSONObject jsonReply = new JSONObject();
-//			jsonReply.put("register","register error");
-//			//打印返回的JSON数据
-//			System.out.println(jsonReply);
-//			pw.write(jsonReply.toString());
-//			pw.flush();
-//			pw.close();
-//			
-//		}
-//		
-//		return "";
-//		
-//	}
-	
-	@RequestMapping(value = "/addtag")
+	@RequestMapping(value = "/register")
 	@ResponseBody
-	public String addTag(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException{
+	public String register(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException{		
 		StringBuffer sb = new StringBuffer("");
 		String result = "";
 		try {
@@ -211,11 +142,9 @@ public class APIController {
 		}
 		
 		JSONObject jsonObject = JSONObject.fromObject(result);
-		String tag1 = jsonObject.getString("tag1");
-		String tag2=jsonObject.getString("tag2");
-		String tag3=jsonObject.getString("tag3");
-		String tag4=jsonObject.getString("tag4");
-		String tag5=jsonObject.getString("tag5");
+		String email = jsonObject.getString("e_mail");
+		String password=jsonObject.getString("password");
+		String username=jsonObject.getString("nikeName");
 		user.setEmail(email);
 		user.setUsername(username);
 		user.setUserpwd(password);
@@ -259,7 +188,55 @@ public class APIController {
 			
 		}
 		
-
+		return "";
+		
+	}
+	//插入标签
+	@RequestMapping(value = "/addtag")
+	@ResponseBody
+	public String addTag(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException{
+		StringBuffer sb = new StringBuffer("");
+		String result = "";
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					request.getInputStream(), "utf-8"));
+			String temp;
+			while ((temp = br.readLine()) != null) {
+				sb.append(temp);
+			}
+			br.close();
+			result = sb.toString();
+			//打印android端上传的JSON数据
+			System.out.println(result);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		JSONObject jsonObject = JSONObject.fromObject(result);
+		
+		String tag1=jsonObject.getString("tag1");
+		String tag2=jsonObject.getString("tag2");
+		String tag3=jsonObject.getString("tag3");
+		String tag4=jsonObject.getString("tag4");
+		String tag5=jsonObject.getString("tag5");
+		
+		
+		UserTag t=new UserTag();
+		t.setTag1(tag1);
+		t.setTag2(tag2);
+		t.setTag3(tag3);
+		t.setTag4(tag4);
+		t.setTag5(tag5);
+		userService.addtag(t);
+		
+		PrintWriter pw = response.getWriter();
+		//封装服务器返回的JSON对象
+		JSONObject jsonReply = new JSONObject();
+		jsonReply.put("addtag","add success");
+		//打印返回的JSON数据
+		System.out.println(jsonReply);
+		pw.write(jsonReply.toString());
+		pw.flush();
+		pw.close();	
 		return "";
 	}
 	//登录操作
