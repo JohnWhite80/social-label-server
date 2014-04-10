@@ -36,9 +36,19 @@ public class APIControllerTest {
 	@Test
 	public void testaddtag(){
 		UserTag t=new UserTag();
-		UserService userservice=null;
 		t.setTag1("qq");
-		
+		t.setTag2("qq");
+		t.setTag3("qq");
+		t.setTag4("qq");
+		t.setTag5("qq");
+		ResponseEntity<String> result = template.postForEntity("http://localhost:8080/server/api/addtag", t, String.class);
+		System.out.println(result);
+		HttpStatus statusCode = result.getStatusCode();
+		String code = result.getHeaders().get("x-code").get(0);
+		String message = result.getHeaders().get("x-message").get(0);
+		assertEquals(HttpStatus.OK, statusCode);
+		assertEquals(code, "200");
+		assertEquals(message, "success");
 	}
 	
 }	//HttpEntity<User> requestEntity = new HttpEntity(u);

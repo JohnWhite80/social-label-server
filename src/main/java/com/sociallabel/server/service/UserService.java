@@ -23,6 +23,7 @@ public class UserService {
 	
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
 	private TagRepository tagRepository;
 	@Transactional
 	public User addUser(User u) {

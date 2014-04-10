@@ -53,7 +53,7 @@ public class APIController {
 	int i=0;
     int j=0;
 	User user=new User();
-	UserTag tag=new UserTag();
+	
 	@RequestMapping (value = "/users")
     public @ResponseBody List<User> findAllUsers() {
          return userService.findAllUsers();
@@ -220,7 +220,7 @@ public class APIController {
 		String tag5=jsonObject.getString("tag5");
 		
 		
-		//UserTag t=new UserTag();
+		UserTag tag=new UserTag();
 		tag.setEmail("123456@163.com");
 		tag.setTag1(tag1);
 		tag.setTag2(tag2);
