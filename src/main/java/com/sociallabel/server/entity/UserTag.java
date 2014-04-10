@@ -9,13 +9,14 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="T_Tag")
+@Table(name="t_Tag")
 public class UserTag {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.AUTO)
+//	private Long id;
 
 	// ” œ‰
+	@Id
 	@Column(length = 128, nullable = false, unique = true)
 	private String email;
 	// ±Í«©
@@ -30,13 +31,13 @@ public class UserTag {
 	@Column(length = 256)
 	private String tag5 = "";
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
+//	public Long getId() {
+//		return id;
+//	}
+//
+//	public void setId(Long id) {
+//		this.id = id;
+//	}
 
 	public String getEmail() {
 		return email;

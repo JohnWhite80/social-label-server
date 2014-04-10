@@ -220,13 +220,16 @@ public class APIController {
 		String tag5=jsonObject.getString("tag5");
 		
 		
-		UserTag t=new UserTag();
-		t.setTag1(tag1);
-		t.setTag2(tag2);
-		t.setTag3(tag3);
-		t.setTag4(tag4);
-		t.setTag5(tag5);
-		userService.addtag(t);
+		//UserTag t=new UserTag();
+		tag.setEmail("123456@163.com");
+		tag.setTag1(tag1);
+		tag.setTag2(tag2);
+		tag.setTag3(tag3);
+		tag.setTag4(tag4);
+		tag.setTag5(tag5);
+		//HttpEntity<UserTag> requestEntity = new HttpEntity(tag);
+		//ResponseEntity<String> result1 = template.postForEntity("http://localhost:8080/server/api/addtag", tag, String.class);
+		userService.addtag(tag);
 		
 		PrintWriter pw = response.getWriter();
 		//封装服务器返回的JSON对象
