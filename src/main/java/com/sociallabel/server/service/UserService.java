@@ -1,7 +1,9 @@
 package com.sociallabel.server.service;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,22 +60,29 @@ public class UserService {
 		userRepository.saveAndFlush(user);
 	}
 	@Transactional
-	public UserTag addtag(UserTag t){
-		List<UserTag> tag=tagRepository.findByEmail(t.getEmail());
-		if (tag.size() > 0) {
-			throw new APIException(400, "duplicated tag name");
-		}	
-		t.setEmail(t.getEmail());
-		t.setTag1(t.getTag1());
-		t.setTag2(t.getTag2());
-		t.setTag3(t.getTag3());
-		t.setTag4(t.getTag4());
-		t.setTag5(t.getTag5());
-		//tag.add(t);
-		return tagRepository.saveAndFlush(t);
-		
-			
+	public void addtag(User u){
+		List<User> users = userRepository.findByEmail(u.getEmail());
+		if (users.size() == 0) {
+			throw new APIException(400, "user not exist");
+		}
+		User user = users.get(0);
+		Set<UserTag> tags = u.getUserTags();
+		Set<UserTag> userTags = new HashSet<UserTag>();
+		if(userTags != null) {
+			for(UserTag t:tags) {
+				List<UserTag> tag = tagRepository.findByName(t.getName());
+				if(tag.isEmpty()) {
+					userTags.add(tagRepository.save(t));
+				} else {
+					userTags.add(tag.get(0));
+				}
+				
+			}
+		}
+		user.setUserTags(userTags);
+		userRepository.save(user);
 	}
+	
 	@Transactional
 	public void updateUser(User u) {
 		User user=userRepository.findOne(u.getId());

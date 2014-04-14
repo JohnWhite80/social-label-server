@@ -1,10 +1,17 @@
 package com.sociallabel.server.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -36,6 +43,11 @@ public class User {
 	//µØÇø
 	@Column(length = 256)
 	private String city=" ";
+	
+	@ManyToMany(cascade = CascadeType.REFRESH)
+	@JoinTable(name = "T_USER_TAG", inverseJoinColumns = @JoinColumn(name = "USER_ID"), joinColumns = @JoinColumn(name = "TAG_ID"))  
+	private Set<UserTag> userTags = new HashSet<UserTag>(); 
+	
 	public Long getId() {
 		return id;
 	}
@@ -84,8 +96,11 @@ public class User {
 	public void setCity(String city) {
 		this.city = city;
 	}
-	
-	
-
+	public Set<UserTag> getUserTags() {
+		return userTags;
+	}
+	public void setUserTags(Set<UserTag> userTags) {
+		this.userTags = userTags;
+	}	
 	
 }

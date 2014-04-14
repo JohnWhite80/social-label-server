@@ -5,7 +5,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -219,28 +221,40 @@ public class APIController {
 		String tag4=jsonObject.getString("tag4");
 		String tag5=jsonObject.getString("tag5");
 		
+		//should be replaced by spring controller
+		User u = new User();
+		u.setEmail("123456@163.com");
 		
-		UserTag tag=new UserTag();
-		tag.setEmail("123456@163.com");
-		tag.setTag1(tag1);
-		tag.setTag2(tag2);
-		tag.setTag3(tag3);
-		tag.setTag4(tag4);
-		tag.setTag5(tag5);
+		Set<UserTag> userTags = new HashSet<UserTag>();
+		UserTag tag = new UserTag();
+		tag.setName(tag1);
+		userTags.add(tag);
+		
+		tag = new UserTag();
+		tag.setName(tag2);
+		userTags.add(tag);
+		
+		tag = new UserTag();
+		tag.setName(tag3);
+		userTags.add(tag);
+		
+		tag = new UserTag();
+		tag.setName(tag4);
+		userTags.add(tag);
+		
+		tag = new UserTag();
+		tag.setName(tag5);
+		userTags.add(tag);
+
+		u.setUserTags(userTags);
 		//HttpEntity<UserTag> requestEntity = new HttpEntity(tag);
 		//ResponseEntity<String> result1 = template.postForEntity("http://localhost:8080/server/api/addtag", tag, String.class);
-		userService.addtag(tag);
+		userService.addtag(u);
 		
-		PrintWriter pw = response.getWriter();
 		//封装服务器返回的JSON对象
 		JSONObject jsonReply = new JSONObject();
 		jsonReply.put("addtag","add success");
-		//打印返回的JSON数据
-		System.out.println(jsonReply);
-		pw.write(jsonReply.toString());
-		pw.flush();
-		pw.close();	
-		return "";
+		return jsonReply.toString();
 	}
 	//登录操作
 	@RequestMapping(value = "/logging")

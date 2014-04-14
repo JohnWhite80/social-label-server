@@ -1,19 +1,14 @@
 package com.sociallabel.server.action;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import com.sociallabel.server.entity.User;
-import com.sociallabel.server.entity.UserTag;
-import com.sociallabel.server.service.UserService;
 
 public class APIControllerTest {
 	
@@ -35,13 +30,13 @@ public class APIControllerTest {
 //	}
 	@Test
 	public void testaddtag(){
-		UserTag t=new UserTag();
-		t.setTag1("qq");
-		t.setTag2("qq");
-		t.setTag3("qq");
-		t.setTag4("qq");
-		t.setTag5("qq");
-		ResponseEntity<String> result = template.postForEntity("http://localhost:8080/server/api/addtag", t, String.class);
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("tag1", "a");
+		map.put("tag2", "d");
+		map.put("tag3", "c");
+		map.put("tag4", "d");
+		map.put("tag5", "e");
+		ResponseEntity<String> result = template.postForEntity("http://localhost:8080/server/api/addtag", map, String.class);
 		System.out.println(result);
 		HttpStatus statusCode = result.getStatusCode();
 		String code = result.getHeaders().get("x-code").get(0);
