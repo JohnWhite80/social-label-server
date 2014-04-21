@@ -59,6 +59,7 @@ public class UserService {
 		user.setPicture(f.getAbsolutePath());
 		userRepository.saveAndFlush(user);
 	}
+	
 	@Transactional
 	public void addtag(User u){
 		List<User> users = userRepository.findByEmail(u.getEmail());
@@ -81,6 +82,7 @@ public class UserService {
 		}
 		user.setUserTags(userTags);
 		userRepository.save(user);
+
 	}
 	
 	@Transactional
