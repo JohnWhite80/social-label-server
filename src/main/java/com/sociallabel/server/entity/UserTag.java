@@ -20,7 +20,7 @@ public class UserTag {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
-	@Column(length = 128, nullable = false)
+	@Column(length = 128, nullable = false, unique = true)
 	private String name;
 	
 	@ManyToMany(cascade=CascadeType.REFRESH,mappedBy="userTags")

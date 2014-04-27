@@ -193,7 +193,6 @@ public class APIController {
 		return "";
 		
 	}
-	
 	//插入标签
 	@RequestMapping(value = "/addtag")
 	@ResponseBody
@@ -221,11 +220,10 @@ public class APIController {
 		String tag3=jsonObject.getString("tag3");
 		String tag4=jsonObject.getString("tag4");
 		String tag5=jsonObject.getString("tag5");
-		String email=jsonObject.getString("email");
 		
 		//should be replaced by spring controller
 		User u = new User();
-		u.setEmail("sz");
+		u.setEmail("123456@163.com");
 		
 		Set<UserTag> userTags = new HashSet<UserTag>();
 		UserTag tag = new UserTag();
@@ -250,7 +248,7 @@ public class APIController {
 
 		u.setUserTags(userTags);
 		//HttpEntity<UserTag> requestEntity = new HttpEntity(tag);
-		ResponseEntity<String> result1 = template.postForEntity("http://localhost:8080/server/api/addtag", tag, String.class);
+		//ResponseEntity<String> result1 = template.postForEntity("http://localhost:8080/server/api/addtag", tag, String.class);
 		userService.addtag(u);
 		
 		//封装服务器返回的JSON对象
@@ -258,8 +256,6 @@ public class APIController {
 		jsonReply.put("addtag","add success");
 		return jsonReply.toString();
 	}
-
-
 	//登录操作
 	@RequestMapping(value = "/logging")
 	@ResponseBody
@@ -328,62 +324,15 @@ public class APIController {
 	}
 	
 	
-//	@RequestMapping(value = "/register1")
-//	@ResponseBody
-//	public JSONObject registerUser(@RequestBody User user, Model model) {
-//		System.out.println(user.getUserpwd());
-//		userService.addUser(user);
-//		JSONObject jsonReply = new JSONObject();
-//		jsonReply.put("register","register success");
-//		jsonReply.put("email",user.getEmail());
-//		return jsonReply;
-//	}
-	
 	@RequestMapping(value = "/register1")
 	@ResponseBody
-	public JSONObject registerUser(HttpServletRequest request,HttpServletResponse response) throws IOException{
-		StringBuffer sb = new StringBuffer("");
-		String result = "";
-		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					request.getInputStream(), "utf-8"));
-			String temp;
-			while ((temp = br.readLine()) != null) {
-				sb.append(temp);
-			}
-			br.close();
-			result = sb.toString();
-			//打印android端上传的JSON数据
-			System.out.println(result);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		JSONObject jsonObject = JSONObject.fromObject(result);
-		String e_mail=jsonObject.getString("e_mail");
-		String password=jsonObject.getString("password");
-		String nikeName=jsonObject.getString("nikeName");
-		User user=new User();
-		user.setEmail(e_mail);
-		user.setUsername(nikeName);
-		user.setUserpwd(nikeName);
+	public JSONObject registerUser(@RequestBody User user, Model model) {
 		userService.addUser(user);
 		JSONObject jsonReply = new JSONObject();
 		jsonReply.put("register","register success");
 		jsonReply.put("email",user.getEmail());
 		return jsonReply;
 	}
-	
-	
-	@RequestMapping(value = "/test")
-	@ResponseBody
-	public JSONObject test(HttpServletRequest request,HttpServletResponse response) throws IOException{
-		String name=request.getParameter("name");
-		System.out.println(name);
-		JSONObject jsonReply = new JSONObject();
-		jsonReply.put("register",name);
-		return jsonReply;
-	}
-	
 	
 	/**
 	 * Simply selects the home view to render by returning its name.
@@ -411,27 +360,5 @@ public class APIController {
 		responseHeaders.set("x-message", errorMessage);
 		return new ResponseEntity<String>("", responseHeaders, HttpStatus.OK);
 	}
-
-	
-	
-	@RequestMapping(value = "/registerTest", method = RequestMethod.POST,  produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public ResponseEntity<String> registerTest(@RequestParam("UserId") String UserId, @RequestParam("Password") String Password,@RequestParam("NikeName") String NikeName) throws Exception {
-		User user=new User();
-		user.setEmail(UserId);
-		user.setUsername(NikeName);
-		user.setUserpwd(Password);
-		userService.addUser(user);
-		System.out.println(UserId+"::::"+NikeName+":::"+Password);
-		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.set("x-code", "200");
-		responseHeaders.set("x-message", "success");
-		responseHeaders.set("name", "piterflaskhdfkashdkghsdkjg");
-		
-		
-		return new ResponseEntity<String>("", responseHeaders, HttpStatus.OK);
-	}
-
-	
 
 }
