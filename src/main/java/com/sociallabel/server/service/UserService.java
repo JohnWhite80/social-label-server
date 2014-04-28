@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,7 +25,7 @@ import com.sociallabel.server.util.SecurityUtil;
 public class UserService {
 	
 	private @Value("${app.image.store.path}") String path;
-	
+	private EntityManager em;
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
@@ -106,5 +109,14 @@ public class UserService {
 //		em.persist(user);
 	   //em.joinTransaction();
 		
+	}
+	@Transactional
+	public List<UserTag> searchTag(UserTag t){
+		String name=t.getName();
+		TypedQuery<UserTag> q = em.createQuery(
+				"SELECT t FROM UserTag t where t.Name like '%'"+name+"'%'", UserTag.class);
+		List<UserTag> list=q.getResultList();
+		
+		return list;
 	}
 }

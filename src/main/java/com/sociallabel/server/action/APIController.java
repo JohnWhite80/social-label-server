@@ -322,7 +322,60 @@ public class APIController {
 		return "";
 		
 	}
-	
+	//搜索操作
+	@RequestMapping(value = "/search")
+	@ResponseBody
+	public String search(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		StringBuffer sb = new StringBuffer("");
+		String result = "";
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					request.getInputStream(), "utf-8"));
+			String temp;
+			while ((temp = br.readLine()) != null) {
+				sb.append(temp);
+			}
+			br.close();
+			result = sb.toString();
+			//打印android端上传的JSON数据
+			System.out.println(result);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		JSONObject jsonObject = JSONObject.fromObject(result);
+		String name=jsonObject.getString("name");
+		UserTag t=new UserTag();
+		t.setName(name);
+		List<UserTag> tag=userService.searchTag(t);
+		JSONObject jsonReply = new JSONObject();
+		if(tag!=null){
+			for(i=0;i<tag.size();i++){
+				String sr=tag.get(i).getName();
+				jsonReply.put("sr", sr);
+				jsonReply.put("ss", "searchsuccess");
+			}
+			System.out.println("search success");
+			PrintWriter pw = response.getWriter();
+			System.out.println(jsonReply);
+			pw.write(jsonReply.toString());
+			pw.flush();
+			pw.close();
+			
+		}
+		else{
+			System.out.println("Search Error");
+			PrintWriter pw = response.getWriter();
+			//封装服务器返回的JSON对象
+			JSONObject jsonReply1 = new JSONObject();
+			jsonReply1.put("se","search error");
+			//打印返回的JSON数据
+			System.out.println(jsonReply1);
+			pw.write(jsonReply1.toString());
+			pw.flush();
+			pw.close();
+		}
+		return "";
+	}
 	
 	@RequestMapping(value = "/register1")
 	@ResponseBody
