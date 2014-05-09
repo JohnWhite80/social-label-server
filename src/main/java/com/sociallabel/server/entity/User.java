@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -44,7 +45,9 @@ public class User {
 	@Column(length = 256)
 	private String city=" ";
 	
-	@ManyToMany(cascade = CascadeType.REFRESH)
+
+	@ManyToMany(cascade = CascadeType.REFRESH,fetch=FetchType.EAGER)
+
 	@JoinTable(name = "T_USER_TAG", inverseJoinColumns = @JoinColumn(name = "TAG_ID",referencedColumnName="ID"), joinColumns = @JoinColumn(name = "USER_ID",referencedColumnName="ID"))  
 	private Set<UserTag> userTags = new HashSet<UserTag>(); 
 	

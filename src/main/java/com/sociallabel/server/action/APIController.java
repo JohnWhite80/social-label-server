@@ -5,15 +5,24 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+
 import javax.servlet.ServletException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.tagext.TagSupport;
 
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.codec.binary.Base64;
@@ -52,6 +61,7 @@ public class APIController {
 	@Autowired
 	private UserService userService;
 	protected final RestTemplate template = new RestTemplate();
+	
 	int i=0;
     int j=0;
 	User user=new User();
@@ -321,11 +331,11 @@ public class APIController {
 		}
 		return "";
 		
-	}
-	//搜索操作
+	}	
 	@RequestMapping(value = "/search")
 	@ResponseBody
-	public String search(HttpServletRequest request,HttpServletResponse response) throws IOException{
+	public JSONObject search(HttpServletRequest request,HttpServletResponse response)throws IOException, ServletException {
+		
 		StringBuffer sb = new StringBuffer("");
 		String result = "";
 		try {
@@ -343,40 +353,156 @@ public class APIController {
 			e.printStackTrace();
 		}
 		JSONObject jsonObject = JSONObject.fromObject(result);
-		String name=jsonObject.getString("name");
-		UserTag t=new UserTag();
-		t.setName(name);
-		List<UserTag> tag=userService.searchTag(t);
-		JSONObject jsonReply = new JSONObject();
-		if(tag!=null){
-			for(i=0;i<tag.size();i++){
-				String sr=tag.get(i).getName();
-				jsonReply.put("sr", sr);
-				jsonReply.put("ss", "searchsuccess");
-			}
-			System.out.println("search success");
-			PrintWriter pw = response.getWriter();
-			System.out.println(jsonReply);
-			pw.write(jsonReply.toString());
-			pw.flush();
-			pw.close();
-			
-		}
-		else{
-			System.out.println("Search Error");
-			PrintWriter pw = response.getWriter();
-			//封装服务器返回的JSON对象
-			JSONObject jsonReply1 = new JSONObject();
-			jsonReply1.put("se","search error");
-			//打印返回的JSON数据
-			System.out.println(jsonReply1);
-			pw.write(jsonReply1.toString());
-			pw.flush();
-			pw.close();
-		}
-		return "";
+		String tagname=jsonObject.getString("tagname");
+//		System.out.println(tagname);
+		 //String tagname=request.getParameter("tagname");
+		 List userlist=new LinkedList();
+		 List<Map<String,Object>> totallist=new ArrayList<Map<String,Object>>();
+		 List<UserTag> similartagslist=userService.findByTagContaining(tagname);
+		 for(int i=0;i<similartagslist.size();i++){	 
+			String name=similartagslist.get(i).getName();
+		    System.out.println(name);
+		    userlist=userService.searchTagGetUser(similartagslist.get(i).getName());
+		   		    
+	        Map<String,Object> map=new HashMap<String,Object>();
+	        map.put("tagname",name );
+	        map.put("users", userlist);
+	        totallist.add(map);
+		 }
+		 System.out.println(totallist);
+		 JSONObject jsonReply = new JSONObject();
+		jsonReply.put("searchResult",totallist);
+		
+		return jsonReply;
+		
+	}
+
+	@RequestMapping(value = "/searchTagGetUser")
+	@ResponseBody
+	public List searchTagGetUser(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException{
+		        
+	           String name=request.getParameter("tagname");
+	           List usernamelist=new LinkedList();
+	         List<UserTag> list = userService.findByName(name);
+	         Set<User> users=new HashSet<User>();
+	              for(int i=0;i<list.size();i++){  	            	 
+	            	  users=list.get(i).getUsers();
+	            	  Iterator it=users.iterator();//将hs转换为一个可遍历的对象Iterator
+	            	  while(it.hasNext()){
+	            		  User user=(User)it.next();
+	            		  String username=user.getUsername();
+	                      usernamelist.add(username);
+	            		  System.out.println(username);
+	            	  }
+	              }
+	             
+	           return usernamelist;
 	}
 	
+	@RequestMapping(value = "/searchUserGetTag")
+	@ResponseBody
+	public String searchUserGetTag(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException{
+	           String username=request.getParameter("username");
+	         List<User> list = userService.findByUsername(username);
+	         Set<UserTag> usertags=new HashSet<UserTag>();
+	              for(int i=0;i<list.size();i++){            	
+	            	  usertags=list.get(i).getUserTags();
+	            	  Iterator tit=usertags.iterator();//将hs转换为一个可遍历的对象Iterator
+	            	  while(tit.hasNext()){
+	            		  UserTag usertag=(UserTag)tit.next();
+	            		  String tagname=usertag.getName();
+	            		  System.out.println(tagname);
+	            	  }
+	              }
+	             
+	           return username;
+	}
+	
+
+	//搜索操作
+	@RequestMapping(value = "/searchSimilarTag")
+	@ResponseBody
+	public String searchSimilarTag(HttpServletRequest request,HttpServletResponse response) throws IOException{
+//		StringBuffer sb = new StringBuffer("");
+//		String result = "";
+//		try {
+//			BufferedReader br = new BufferedReader(new InputStreamReader(
+//					request.getInputStream(), "utf-8"));
+//			String temp;
+//			while ((temp = br.readLine()) != null) {
+//				sb.append(temp);
+//			}
+//			br.close();
+//			result = sb.toString();
+//			//打印android端上传的JSON数据
+//			System.out.println(result);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		JSONObject jsonObject = JSONObject.fromObject(result);
+//		String name=jsonObject.getString("name");
+		String nametag=request.getParameter("tagname");
+		List<UserTag> list=userService.findByTagContaining(nametag);
+//		List<UserTag> list=userService.findByTagContainingOrderByTagDESC(nametag);
+		for(int i=0;i<list.size();i++){
+			System.out.println(list.get(i).getName()); 
+		}
+//		JSONObject jsonReply = new JSONObject();
+//		if(tag!=null){
+//			for(i=0;i<tag.size();i++){
+//				String sr=tag.get(i).getName();
+//				jsonReply.put("sr", sr);
+//				jsonReply.put("ss", "searchsuccess");
+//			}
+//			System.out.println("search success");
+//			PrintWriter pw = response.getWriter();
+//			System.out.println(jsonReply);
+//			pw.write(jsonReply.toString());
+//			pw.flush();
+//			pw.close();
+//			
+//		}
+//		else{
+//			System.out.println("Search Error");
+//			PrintWriter pw = response.getWriter();
+//			//封装服务器返回的JSON对象
+//			JSONObject jsonReply1 = new JSONObject();
+//			jsonReply1.put("se","search error");
+//			//打印返回的JSON数据
+//			System.out.println(jsonReply1);
+//			pw.write(jsonReply1.toString());
+//			pw.flush();
+//			pw.close();
+//		}
+		return nametag;
+	}
+//推荐操作
+@RequestMapping(value = "/recommend")
+	@ResponseBody
+	public String recommend(HttpServletRequest request,HttpServletResponse response){
+		String email=request.getParameter("email");
+		User u=new User();
+		u.setEmail(email);
+		List userlist=new LinkedList();
+		 List<Map<String,Object>> totallist=new ArrayList<Map<String,Object>>();
+		List<UserTag> t=userService.recommend(u);
+		for(i=0;i<=t.size();i++){
+			String tagname=t.get(i).getName();
+			System.out.println(t.get(i).getName());
+			userlist=userService.searchTagGetUser(tagname);
+			 Map<String,Object> map=new HashMap<String,Object>();
+			 map.put("tagname", tagname);
+			 map.put("users", userlist);
+			 totallist.add(map);
+			 //System.out.println(totallist);
+		}
+		System.out.println(totallist);
+		return "";
+		
+	}
+
+
+
 	@RequestMapping(value = "/register1")
 	@ResponseBody
 	public JSONObject registerUser(@RequestBody User user, Model model) {

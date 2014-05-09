@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,7 +24,7 @@ public class UserTag {
 	@Column(length = 128, nullable = false, unique = true)
 	private String name;
 	
-	@ManyToMany(cascade=CascadeType.REFRESH,mappedBy="userTags")
+	@ManyToMany(cascade=CascadeType.REFRESH,mappedBy="userTags",fetch=FetchType.EAGER)
 	private Set<User> users = new HashSet<User>();
 
 	public Long getId() {
