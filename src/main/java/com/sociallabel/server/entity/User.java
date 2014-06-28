@@ -47,10 +47,11 @@ public class User {
 	
 
 	@ManyToMany(cascade = CascadeType.REFRESH,fetch=FetchType.EAGER)
-
+	
 	@JoinTable(name = "T_USER_TAG", inverseJoinColumns = @JoinColumn(name = "TAG_ID",referencedColumnName="ID"), joinColumns = @JoinColumn(name = "USER_ID",referencedColumnName="ID"))  
 	private Set<UserTag> userTags = new HashSet<UserTag>(); 
-	
+	//@JoinTable(name = "attention", inverseJoinColumns = @JoinColumn(name = "ROOM_ID",referencedColumnName="ID"), joinColumns = @JoinColumn(name = "USER_ID",referencedColumnName="ID"))
+	//private Set<T_User_Tag> t_user_tag=new HashSet<T_User_Tag>();
 	public Long getId() {
 		return id;
 	}

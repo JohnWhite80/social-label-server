@@ -81,11 +81,11 @@ public class UserService {
 	 
 
 	@Transactional
-	public void updateProfile(long userId, String filename, MultipartFile file) throws Exception {
+	public void updateProfile(String email, String filename, MultipartFile file) throws Exception {
 		String ext = filename.substring(filename.indexOf(".")+1, filename.length());
 		File f = new File(path + File.separator + System.currentTimeMillis() + "." + ext);
 		file.transferTo(f);
-		User user = userRepository.findOne(userId);
+		User user = (User)userRepository.findByEmail(email);
 		user.setPicture(f.getAbsolutePath());
 		userRepository.saveAndFlush(user);
 	}
@@ -115,7 +115,7 @@ public class UserService {
 	
 	@Transactional
 	public void updateUser(User u) {
-		User user=userRepository.findOne(u.getId());
+		User user=(User)userRepository.findByEmail(u.getEmail());
 		user.setSex(u.getSex());
 		user.setBirthday(u.getBirthday());
 		user.setCity(u.getCity());

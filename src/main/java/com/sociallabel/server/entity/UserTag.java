@@ -26,7 +26,9 @@ public class UserTag {
 	
 	@ManyToMany(cascade=CascadeType.REFRESH,mappedBy="userTags",fetch=FetchType.EAGER)
 	private Set<User> users = new HashSet<User>();
-
+	@ManyToMany(cascade=CascadeType.REFRESH,mappedBy="userTags",fetch=FetchType.EAGER)
+	private Set<RoomSubject> RoomSubjects = new HashSet<RoomSubject>();
+	
 	public Long getId() {
 		return id;
 	}

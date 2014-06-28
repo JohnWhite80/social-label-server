@@ -35,8 +35,12 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -52,6 +56,7 @@ import com.sociallabel.server.entity.User;
 import com.sociallabel.server.entity.UserTag;
 import com.sociallabel.server.service.UserService;
 import com.sociallabel.server.util.SecurityUtil;
+
 
 @RestController
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -172,8 +177,14 @@ public class APIController {
 		System.out.println(j);
 		if(String.valueOf(list.size()).equals(String.valueOf(j))){
 			//userService.addUser(user);
-			HttpEntity<User> requestEntity = new HttpEntity(user);
-			ResponseEntity<String> result1 = template.postForEntity("http://localhost:8080/server/api/register1", user, String.class);
+//			String email=request.getParameter("email");
+//			String username=request.getParameter("username");
+//			String password=request.getParameter("password");
+//			user.setEmail(email);
+//			user.setUsername(username);
+//			user.setUserpwd(password);
+			//HttpEntity<User> requestEntity = new HttpEntity(user);
+			//ResponseEntity<String> result1 = template.postForEntity("http://localhost:8080/server/api/register1", user, String.class);
 			userService.addUser(user);
 			System.out.println("Register Success");
 			PrintWriter pw = response.getWriter();
@@ -200,7 +211,7 @@ public class APIController {
 			
 		}
 		
-		return "";
+	return "";
 		
 	}
 	//插入标签
@@ -500,6 +511,29 @@ public class APIController {
 		return "";
 		
 	}
+//接收tigase信息
+@RequestMapping(value = "/create",method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
+@ResponseBody
+public ResponseEntity<String> receive(@RequestParam(value="room_address") String room_address,@RequestParam(value="room_creator") String creator){
+	
+	String creator_name=creator.replaceAll("@192.168.191.1", "");
+	System.out.println(room_address);
+	System.out.println(creator_name);
+	//System.out.println(map.get("creator"));
+	MultiValueMap<String, String> map1=new LinkedMultiValueMap<String, String>();
+	return new ResponseEntity<String>("", map1, HttpStatus.OK);
+	
+}
+//
+@RequestMapping(value = "/destroy/{map}",method = RequestMethod.GET)
+@ResponseBody
+public ResponseEntity<String> receive1(@PathVariable("map") MultiValueMap<String, Integer> map){
+	
+	System.out.println(map);
+	MultiValueMap<String, String> map1=new LinkedMultiValueMap<String, String>();
+	return new ResponseEntity<String>("", map1, HttpStatus.OK);
+	
+}
 
 
 
@@ -519,8 +553,13 @@ public class APIController {
 	 */
 	@RequestMapping(value = "/profile", method = RequestMethod.POST,  produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public ResponseEntity<String> profile(@RequestParam("userId") long userId, @RequestParam("filename") String filename, @RequestPart("image") MultipartFile file) throws Exception {
-		userService.updateProfile(userId, filename, file);
+	public ResponseEntity<String> profile(@RequestParam("userId") String useremail, @RequestParam("filename") String filename, @RequestPart("image") MultipartFile file,@RequestParam("birthday") String birthday,@RequestParam("sex") String sex,@RequestParam("city") String city) throws Exception {
+		userService.updateProfile(useremail, filename, file);
+		User u=new User();
+		u.setSex(sex);
+		u.setBirthday(birthday);
+		u.setCity(city);
+		userService.updateUser(u);
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.set("x-code", "200");
 		responseHeaders.set("x-message", "success");
